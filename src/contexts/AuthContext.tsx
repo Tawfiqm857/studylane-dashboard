@@ -4,6 +4,7 @@ interface User {
   id: string;
   name: string;
   email: string;
+  avatar?: string;
 }
 
 interface AuthContextType {
@@ -11,6 +12,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   signup: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
+  updateAvatar: (avatar: string) => void;
   isAuthenticated: boolean;
 }
 
@@ -75,6 +77,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return true;
   };
 
+  const updateAvatar = (avatar: string) => {
+    if (user) {
+      const updatedUser = { ...user, avatar };
+      setUser(updatedUser);
+      localStorage.setItem('student-test-user', JSON.stringify(updatedUser));
+    }
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('student-test-user');
@@ -85,6 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     login,
     signup,
     logout,
+    updateAvatar,
     isAuthenticated: !!user
   };
 

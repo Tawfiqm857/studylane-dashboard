@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTest } from '@/contexts/TestContext';
-import { Play, Clock, Trophy, Target, BookOpen, Brain } from 'lucide-react';
+import { Play, Clock, Trophy, Target, BookOpen, Brain, Settings } from 'lucide-react';
+import ProfilePictureUpload from '@/components/ProfilePictureUpload';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -58,10 +59,27 @@ const Dashboard: React.FC = () => {
       <div className="container">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Welcome back, {user?.name}! 👋</h1>
-          <p className="text-muted-foreground text-lg">
-            Ready to continue your web development journey? Let's see how you're progressing.
-          </p>
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">Welcome back, {user?.name}! 👋</h1>
+              <p className="text-muted-foreground text-lg">
+                Ready to continue your web development journey? Let's see how you're progressing.
+              </p>
+            </div>
+            <div className="flex-shrink-0">
+              <Card className="p-6 shadow-card border-0">
+                <div className="flex items-center space-x-4">
+                  <ProfilePictureUpload />
+                  <div className="space-y-1">
+                    <h3 className="font-semibold">Profile</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Customize your avatar
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </div>
         </div>
 
         {/* Stats Overview */}
