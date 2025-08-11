@@ -24,7 +24,7 @@ const App = () => (
     <TooltipProvider>
       <AuthProvider>
         <TestProvider>
-          <Router>
+          <HashRouter>
             <div className="min-h-screen flex flex-col">
               <Header />
               <main className="flex-1">
@@ -55,7 +55,7 @@ const App = () => (
             </div>
             <Toaster />
             <Sonner />
-          </Router>
+          </HashRouter>
         </TestProvider>
       </AuthProvider>
     </TooltipProvider>
