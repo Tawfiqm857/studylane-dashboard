@@ -7,18 +7,33 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Node modules
+node_modules/
 
-# Editor directories and files
+# Build output
+# Ignore dist unless deploying directly from repo (e.g., GitHub Pages)
+# Uncomment the next line if you deploy from GitHub Actions or Vercel
+# dist/
+dist-ssr/
+
+# Local environment files
+*.local
+.env
+.env.*.local
+
+# Editor & OS files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
+Thumbs.db
+
+# Misc
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# TypeScript build cache
+*.tsbuildinfo
