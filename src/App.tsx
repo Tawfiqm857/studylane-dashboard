@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { TestProvider } from "./contexts/TestContext";
 import Header from "./components/Header";
@@ -25,7 +25,7 @@ const App = () => (
       <AuthProvider>
         <TestProvider>
           {/* HashRouter works well for GitHub Pages */}
-          <HashRouter>
+          <Router>
             <div className="min-h-screen flex flex-col">
               <Header />
               <main className="flex-1">
@@ -66,7 +66,7 @@ const App = () => (
             </div>
             <Toaster />
             <Sonner />
-          </HashRouter>
+          </Router>
         </TestProvider>
       </AuthProvider>
     </TooltipProvider>
