@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { TestProvider } from "./contexts/TestContext";
 import Header from "./components/Header";
@@ -24,7 +24,8 @@ const App = () => (
     <TooltipProvider>
       <AuthProvider>
         <TestProvider>
-          <Router>
+          {/* HashRouter works well for GitHub Pages */}
+          <HashRouter>
             <div className="min-h-screen flex flex-col">
               <Header />
               <main className="flex-1">
@@ -32,21 +33,31 @@ const App = () => (
                   <Route path="/" element={<Home />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
-                  <Route path="/dashboard" element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/test/:testId" element={
-                    <ProtectedRoute>
-                      <Test />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/results" element={
-                    <ProtectedRoute>
-                      <Results />
-                    </ProtectedRoute>
-                  } />
+                  <Route
+                    path="/dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <Dashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/test/:testId"
+                    element={
+                      <ProtectedRoute>
+                        <Test />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/results"
+                    element={
+                      <ProtectedRoute>
+                        <Results />
+                      </ProtectedRoute>
+                    }
+                  />
+                  {/* Catch-all route */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
@@ -55,7 +66,7 @@ const App = () => (
             </div>
             <Toaster />
             <Sonner />
-          </Router>
+          </HashRouter>
         </TestProvider>
       </AuthProvider>
     </TooltipProvider>
@@ -63,3 +74,4 @@ const App = () => (
 );
 
 export default App;
+
