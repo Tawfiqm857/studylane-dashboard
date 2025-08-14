@@ -15,6 +15,7 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Test from "./pages/Test";
 import Results from "./pages/Results";
+import StudentPerformance from "./pages/StudentPerformance";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -54,6 +55,14 @@ const App = () => (
                     element={
                       <ProtectedRoute>
                         <Results />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/student-performance"
+                    element={
+                      <ProtectedRoute>
+                        <StudentPerformance />
                       </ProtectedRoute>
                     }
                   />

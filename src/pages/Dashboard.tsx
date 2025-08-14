@@ -230,31 +230,73 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Recent Activity */}
-        <Card className="shadow-card border-0">
-          <CardHeader>
-            <CardTitle>Quick Tips</CardTitle>
-            <CardDescription>
-              Make the most of your learning experience
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-                <h4 className="font-semibold text-primary mb-2">📚 Study Strategy</h4>
-                <p className="text-sm text-muted-foreground">
-                  Review incorrect answers and explanations to improve your understanding.
-                </p>
+        {/* Quick Actions & Recent Activity */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="shadow-card border-0">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Settings className="h-5 w-5 text-primary" />
+                <span>Quick Actions</span>
+              </CardTitle>
+              <CardDescription>
+                Navigate to key features and pages
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-3">
+                <Button asChild variant="outline" className="h-16 flex-col">
+                  <Link to="/student-performance">
+                    <Trophy className="h-5 w-5 mb-1" />
+                    <span className="text-xs">Performance</span>
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="h-16 flex-col">
+                  <Link to="/test/html-basics">
+                    <Play className="h-5 w-5 mb-1" />
+                    <span className="text-xs">Take Quiz</span>
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="h-16 flex-col">
+                  <Link to="/results">
+                    <Target className="h-5 w-5 mb-1" />
+                    <span className="text-xs">View Results</span>
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="h-16 flex-col">
+                  <Link to="/">
+                    <BookOpen className="h-5 w-5 mb-1" />
+                    <span className="text-xs">Home</span>
+                  </Link>
+                </Button>
               </div>
-              <div className="p-4 rounded-lg bg-success/5 border border-success/20">
-                <h4 className="font-semibold text-success mb-2">🎯 Practice Regularly</h4>
-                <p className="text-sm text-muted-foreground">
-                  Take tests multiple times to reinforce your knowledge and track improvement.
-                </p>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-card border-0">
+            <CardHeader>
+              <CardTitle>Learning Tips</CardTitle>
+              <CardDescription>
+                Make the most of your learning experience
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+                  <h4 className="font-semibold text-primary mb-2">📚 Study Strategy</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Review incorrect answers and explanations to improve your understanding.
+                  </p>
+                </div>
+                <div className="p-4 rounded-lg bg-success/5 border border-success/20">
+                  <h4 className="font-semibold text-success mb-2">🎯 Practice Regularly</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Take tests multiple times to reinforce your knowledge and track improvement.
+                  </p>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
