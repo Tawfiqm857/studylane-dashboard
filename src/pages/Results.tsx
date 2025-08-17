@@ -2,8 +2,9 @@ import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useTest, TestAttempt } from '@/contexts/TestContext';
-import { Trophy, RotateCcw, Home, CheckCircle, XCircle } from 'lucide-react';
+import { Trophy, RotateCcw, Home, CheckCircle, XCircle, Lightbulb } from 'lucide-react';
 
 const Results: React.FC = () => {
   const location = useLocation();

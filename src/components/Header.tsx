@@ -2,11 +2,13 @@ import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { BookOpen, User, LogOut, Home, BarChart3 } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
+import { BookOpen, User, LogOut, Home, BarChart3, Trophy, Shield, Moon, Sun } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 const Header: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -48,19 +50,50 @@ const Header: React.FC = () => {
           </Link>
 
           {isAuthenticated && (
-            <Link
-              to="/dashboard"
-              className={`flex items-center space-x-2 text-sm font-medium transition-colors hover:text-primary ${
-                isActivePath('/dashboard') ? 'text-primary' : 'text-muted-foreground'
-              }`}
-            >
-              <BarChart3 className="h-4 w-4" />
-              <span>Dashboard</span>
-            </Link>
+            <>
+              <Link
+                to="/dashboard"
+                className={`flex items-center space-x-2 text-sm font-medium transition-colors hover:text-primary ${
+                  isActivePath('/dashboard') ? 'text-primary' : 'text-muted-foreground'
+                }`}
+              >
+                <BarChart3 className="h-4 w-4" />
+                <span>Dashboard</span>
+              </Link>
+              <Link
+                to="/leaderboard"
+                className={`flex items-center space-x-2 text-sm font-medium transition-colors hover:text-primary ${
+                  isActivePath('/leaderboard') ? 'text-primary' : 'text-muted-foreground'
+                }`}
+              >
+                <Trophy className="h-4 w-4" />
+                <span>Leaderboard</span>
+              </Link>
+              {user?.email === 'admin@example.com' && (
+                <Link
+                  to="/admin"
+                  className={`flex items-center space-x-2 text-sm font-medium transition-colors hover:text-primary ${
+                    isActivePath('/admin') ? 'text-primary' : 'text-muted-foreground'
+                  }`}
+                >
+                  <Shield className="h-4 w-4" />
+                  <span>Admin</span>
+                </Link>
+              )}
+            </>
           )}
         </nav>
 
         <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleTheme}
+            className="h-8 w-8 p-0"
+          >
+            {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+          </Button>
+          
           {isAuthenticated ? (
             <div className="flex items-center space-x-4">
               <div className="hidden sm:flex items-center space-x-3">
