@@ -182,14 +182,32 @@ const Test: React.FC = () => {
                   onValueChange={(value) => handleAnswerSelect(currentQuestion.id, parseInt(value))}
                   className="space-y-3"
                 >
-                  {currentQuestion.options.map((option, index) => (
-                    <div key={index} className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors">
-                      <RadioGroupItem value={index.toString()} id={`option-${index}`} />
-                      <Label htmlFor={`option-${index}`} className="flex-1 cursor-pointer">
-                        {option}
-                      </Label>
-                    </div>
-                  ))}
+                  {currentQuestion.options.map((option, index) => {
+                    const isSelected = currentAnswers[currentQuestion.id] === index;
+                    return (
+                      <div 
+                        key={index} 
+                        className={`flex items-center space-x-3 p-3 rounded-lg border transition-colors cursor-pointer ${
+                          isSelected 
+                            ? 'bg-primary/10 border-primary text-primary' 
+                            : 'hover:bg-muted/50 border-border'
+                        }`}
+                        onClick={() => handleAnswerSelect(currentQuestion.id, index)}
+                      >
+                        <RadioGroupItem 
+                          value={index.toString()} 
+                          id={`option-${index}`}
+                          className={isSelected ? 'border-primary text-primary' : ''}
+                        />
+                        <Label 
+                          htmlFor={`option-${index}`} 
+                          className="flex-1 cursor-pointer"
+                        >
+                          {option}
+                        </Label>
+                      </div>
+                    );
+                  })}
                 </RadioGroup>
               </CardContent>
             </Card>

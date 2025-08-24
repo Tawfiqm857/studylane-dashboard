@@ -107,10 +107,13 @@ const Results: React.FC = () => {
                             Correct answer: {question.options[question.correctAnswer]}
                           </p>
                         )}
-                        {question.explanation && (
-                          <p className="text-sm text-muted-foreground mt-2 p-2 bg-muted/50 rounded">
-                            💡 {question.explanation}
-                          </p>
+                        {question.explanation && !isCorrect && (
+                          <Alert className="mt-2">
+                            <Lightbulb className="h-4 w-4" />
+                            <AlertDescription className="text-sm">
+                              <strong>Explanation:</strong> {question.explanation}
+                            </AlertDescription>
+                          </Alert>
                         )}
                       </div>
                     </div>

@@ -11,7 +11,7 @@ export interface Question {
 export interface Test {
   id: string;
   title: string;
-  subject: 'HTML' | 'CSS' | 'JavaScript';
+  subject: 'HTML' | 'CSS' | 'JavaScript' | 'UI/UX Design' | 'Data Analysis' | 'Video Editing' | 'Graphics Design' | 'Digital Marketing';
   description: string;
   questions: Question[];
   timeLimit: number; // in minutes
@@ -1143,6 +1143,226 @@ const mockTests: Test[] = [
         options: ['Getting money', 'Objects inheriting properties from other objects', 'Class inheritance', 'Property inheritance'],
         correctAnswer: 1,
         explanation: 'Inheritance allows objects to inherit properties and methods from other objects or classes.'
+      }
+    ]
+  },
+  {
+    id: 'uiux-design',
+    title: 'UI/UX Design Fundamentals',
+    subject: 'UI/UX Design',
+    description: 'Test your knowledge of user interface and user experience design principles.',
+    timeLimit: 45,
+    questions: [
+      {
+        id: 'ux1',
+        question: 'What does UX stand for?',
+        options: ['User Experience', 'User Extension', 'Universal Experience', 'Unified Experience'],
+        correctAnswer: 0,
+        explanation: 'UX stands for User Experience, which encompasses all aspects of the end-user\'s interaction with the company, its services, and its products.'
+      },
+      {
+        id: 'ux2',
+        question: 'Which principle states that similar elements should be grouped together?',
+        options: ['Proximity', 'Alignment', 'Contrast', 'Repetition'],
+        correctAnswer: 0,
+        explanation: 'The Proximity principle states that related items should be grouped together to create visual unity.'
+      },
+      {
+        id: 'ux3',
+        question: 'What is a wireframe?',
+        options: ['A high-fidelity design', 'A low-fidelity blueprint', 'A coding framework', 'A testing method'],
+        correctAnswer: 1,
+        explanation: 'A wireframe is a low-fidelity blueprint that shows the basic structure and layout of a page or app.'
+      },
+      {
+        id: 'ux4',
+        question: 'What does A/B testing help determine?',
+        options: ['Code quality', 'Which version performs better', 'Server speed', 'Database efficiency'],
+        correctAnswer: 1,
+        explanation: 'A/B testing compares two versions to see which one performs better with users.'
+      },
+      {
+        id: 'ux5',
+        question: 'What is the primary goal of user research?',
+        options: ['Increase sales', 'Understand user needs', 'Reduce costs', 'Speed up development'],
+        correctAnswer: 1,
+        explanation: 'User research aims to understand user behaviors, needs, and motivations through observation and feedback.'
+      }
+    ]
+  },
+  {
+    id: 'data-analysis',
+    title: 'Data Analysis Basics',
+    subject: 'Data Analysis',
+    description: 'Evaluate your understanding of data analysis concepts and techniques.',
+    timeLimit: 45,
+    questions: [
+      {
+        id: 'da1',
+        question: 'What is the difference between mean and median?',
+        options: ['Mean is average, median is middle value', 'They are the same', 'Mean is middle, median is average', 'There is no difference'],
+        correctAnswer: 0,
+        explanation: 'Mean is the average of all values, while median is the middle value when data is sorted.'
+      },
+      {
+        id: 'da2',
+        question: 'What type of chart is best for showing trends over time?',
+        options: ['Pie chart', 'Bar chart', 'Line chart', 'Scatter plot'],
+        correctAnswer: 2,
+        explanation: 'Line charts are ideal for showing trends and changes over time periods.'
+      },
+      {
+        id: 'da3',
+        question: 'What does correlation measure?',
+        options: ['Causation', 'Relationship strength', 'Data accuracy', 'Sample size'],
+        correctAnswer: 1,
+        explanation: 'Correlation measures the strength and direction of a relationship between two variables.'
+      },
+      {
+        id: 'da4',
+        question: 'What is a dataset?',
+        options: ['A single data point', 'A collection of data', 'A database', 'A spreadsheet'],
+        correctAnswer: 1,
+        explanation: 'A dataset is a collection of data, typically organized in a structured format.'
+      },
+      {
+        id: 'da5',
+        question: 'What is data visualization?',
+        options: ['Data storage', 'Data cleaning', 'Graphical representation of data', 'Data collection'],
+        correctAnswer: 2,
+        explanation: 'Data visualization is the graphical representation of information and data using visual elements.'
+      }
+    ]
+  },
+  {
+    id: 'video-editing',
+    title: 'Video Editing Fundamentals',
+    subject: 'Video Editing',
+    description: 'Test your knowledge of video editing techniques and software.',
+    timeLimit: 40,
+    questions: [
+      {
+        id: 've1',
+        question: 'What is a timeline in video editing?',
+        options: ['A schedule', 'A sequence of video clips', 'A type of transition', 'A video format'],
+        correctAnswer: 1,
+        explanation: 'A timeline is the sequence where video clips, audio, and effects are arranged chronologically.'
+      },
+      {
+        id: 've2',
+        question: 'What does "cutting" mean in video editing?',
+        options: ['Deleting footage', 'Joining clips', 'Adding effects', 'Color correction'],
+        correctAnswer: 0,
+        explanation: 'Cutting refers to removing or trimming unwanted parts of video footage.'
+      },
+      {
+        id: 've3',
+        question: 'What is a transition?',
+        options: ['A video format', 'A bridge between clips', 'A type of camera', 'An audio effect'],
+        correctAnswer: 1,
+        explanation: 'A transition is a visual effect that bridges one video clip to another.'
+      },
+      {
+        id: 've4',
+        question: 'What does "rendering" mean?',
+        options: ['Recording video', 'Processing final output', 'Editing audio', 'Adding titles'],
+        correctAnswer: 1,
+        explanation: 'Rendering is the process of generating the final video output from all the editing elements.'
+      },
+      {
+        id: 've5',
+        question: 'What is the purpose of color grading?',
+        options: ['Adding text', 'Enhancing visual mood', 'Cutting clips', 'Adding audio'],
+        correctAnswer: 1,
+        explanation: 'Color grading is used to enhance the visual mood and aesthetic of video footage.'
+      }
+    ]
+  },
+  {
+    id: 'graphics-design',
+    title: 'Graphics Design Principles',
+    subject: 'Graphics Design',
+    description: 'Assess your understanding of graphics design fundamentals and tools.',
+    timeLimit: 40,
+    questions: [
+      {
+        id: 'gd1',
+        question: 'What are the primary colors?',
+        options: ['Red, Green, Blue', 'Red, Yellow, Blue', 'Cyan, Magenta, Yellow', 'Red, Orange, Yellow'],
+        correctAnswer: 1,
+        explanation: 'The primary colors in traditional color theory are Red, Yellow, and Blue.'
+      },
+      {
+        id: 'gd2',
+        question: 'What is typography?',
+        options: ['Image editing', 'The art of arranging type', 'Color theory', 'Logo design'],
+        correctAnswer: 1,
+        explanation: 'Typography is the art and technique of arranging type to make written language legible and appealing.'
+      },
+      {
+        id: 'gd3',
+        question: 'What does DPI stand for?',
+        options: ['Dots Per Inch', 'Design Per Image', 'Digital Print Index', 'Data Per Inch'],
+        correctAnswer: 0,
+        explanation: 'DPI stands for Dots Per Inch, which measures the resolution of printed materials.'
+      },
+      {
+        id: 'gd4',
+        question: 'What is a vector graphic?',
+        options: ['A bitmap image', 'A scalable image made of paths', 'A photograph', 'A web format'],
+        correctAnswer: 1,
+        explanation: 'Vector graphics are images made of mathematical paths that can be scaled without losing quality.'
+      },
+      {
+        id: 'gd5',
+        question: 'What is white space in design?',
+        options: ['Empty areas', 'White colored elements', 'Paper type', 'Text spacing'],
+        correctAnswer: 0,
+        explanation: 'White space (or negative space) refers to empty areas in a design that help create balance and focus.'
+      }
+    ]
+  },
+  {
+    id: 'digital-marketing',
+    title: 'Digital Marketing Essentials',
+    subject: 'Digital Marketing',
+    description: 'Test your knowledge of digital marketing strategies and concepts.',
+    timeLimit: 45,
+    questions: [
+      {
+        id: 'dm1',
+        question: 'What does SEO stand for?',
+        options: ['Search Engine Optimization', 'Social Engagement Online', 'Site Enhancement Operations', 'Search Engine Operations'],
+        correctAnswer: 0,
+        explanation: 'SEO stands for Search Engine Optimization, the practice of increasing website visibility in search results.'
+      },
+      {
+        id: 'dm2',
+        question: 'What is a conversion rate?',
+        options: ['Website speed', 'Percentage of visitors who take desired action', 'Social media followers', 'Email open rate'],
+        correctAnswer: 1,
+        explanation: 'Conversion rate is the percentage of visitors who complete a desired action on your website.'
+      },
+      {
+        id: 'dm3',
+        question: 'What does CTR stand for?',
+        options: ['Click Through Rate', 'Customer Target Rate', 'Content Transfer Rate', 'Campaign Tracking Rate'],
+        correctAnswer: 0,
+        explanation: 'CTR stands for Click Through Rate, the percentage of people who click on a specific link.'
+      },
+      {
+        id: 'dm4',
+        question: 'What is content marketing?',
+        options: ['Selling products directly', 'Creating valuable content to attract customers', 'Email campaigns', 'Social media advertising'],
+        correctAnswer: 1,
+        explanation: 'Content marketing involves creating and sharing valuable content to attract and engage a target audience.'
+      },
+      {
+        id: 'dm5',
+        question: 'What is a landing page?',
+        options: ['Homepage', 'Contact page', 'Specific page for campaign traffic', 'About page'],
+        correctAnswer: 2,
+        explanation: 'A landing page is a specific web page created for marketing campaigns where visitors "land" after clicking on ads or links.'
       }
     ]
   }
