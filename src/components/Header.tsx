@@ -7,7 +7,7 @@ import { BookOpen, User, LogOut, Home, BarChart3, Trophy, Shield, Moon, Sun } fr
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 const Header: React.FC = () => {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated, loading } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();

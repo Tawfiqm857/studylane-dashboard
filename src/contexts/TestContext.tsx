@@ -1,4 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from './AuthContext';
+
+// ... keep existing interfaces for questions and results ...
 
 export interface Question {
   id: string;
@@ -40,7 +44,7 @@ interface TestContextType {
   currentAnswers: Record<string, number>;
   startTest: (testId: string) => void;
   submitAnswer: (questionId: string, answer: number) => void;
-  submitTest: () => TestAttempt | null;
+  submitTest: () => Promise<TestAttempt | null>;
   resetCurrentTest: () => void;
   getTestProgress: (testId: string) => TestProgress;
 }
@@ -1369,18 +1373,19 @@ const mockTests: Test[] = [
 ];
 
 export const TestProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, isAuthenticated } = useAuth();
   const [tests] = useState<Test[]>(mockTests);
   const [testProgress, setTestProgress] = useState<Record<string, TestProgress>>({});
   const [currentTest, setCurrentTest] = useState<Test | null>(null);
   const [currentAnswers, setCurrentAnswers] = useState<Record<string, number>>({});
+  const [loading, setLoading] = useState(false);
 
+  // Load user's quiz progress from Supabase
   useEffect(() => {
-    // Load test progress from localStorage
-    const savedProgress = localStorage.getItem('student-test-progress');
-    if (savedProgress) {
-      setTestProgress(JSON.parse(savedProgress));
+    if (isAuthenticated && user) {
+      loadUserProgress();
     } else {
-      // Initialize progress for all tests
+      // Initialize empty progress if not authenticated
       const initialProgress: Record<string, TestProgress> = {};
       mockTests.forEach(test => {
         initialProgress[test.id] = {
@@ -1392,7 +1397,79 @@ export const TestProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       setTestProgress(initialProgress);
     }
-  }, []);
+  }, [isAuthenticated, user]);
+
+  const loadUserProgress = async () => {
+    if (!user) return;
+
+    try {
+      setLoading(true);
+      const { data: sessions, error } = await supabase
+        .from('quiz_sessions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('completed_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading quiz sessions:', error);
+        return;
+      }
+
+      // Process sessions to create progress
+      const progress: Record<string, TestProgress> = {};
+      
+      // Initialize all tests
+      mockTests.forEach(test => {
+        progress[test.id] = {
+          testId: test.id,
+          attempts: 0,
+          bestScore: 0,
+          status: 'not-started'
+        };
+      });
+
+      // Update with actual session data
+      if (sessions) {
+        sessions.forEach(session => {
+          const testId = session.subject_id;
+          const testName = getTestIdFromSubject(session.subject_id);
+          
+          if (progress[testName]) {
+            progress[testName].attempts++;
+            progress[testName].bestScore = Math.max(progress[testName].bestScore, session.score);
+            progress[testName].lastAttemptDate = new Date(session.completed_at);
+            progress[testName].status = 'completed';
+          }
+        });
+      }
+
+      setTestProgress(progress);
+    } catch (error) {
+      console.error('Error loading user progress:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Helper function to map subject names to test IDs
+  const getTestIdFromSubject = (subjectName: string): string => {
+    const mapping: Record<string, string> = {
+      'HTML': 'html-basics',
+      'CSS': 'css-fundamentals',
+      'JavaScript': 'js-essentials',
+      'UI/UX Design': 'uiux-design',
+      'Data Analysis': 'data-analysis',
+      'Video Editing': 'video-editing',
+      'Graphics Design': 'graphics-design',
+      'Digital Marketing': 'digital-marketing'
+    };
+    return mapping[subjectName] || subjectName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+  };
+
+  const getSubjectFromTestId = (testId: string): string => {
+    const test = tests.find(t => t.id === testId);
+    return test?.subject || 'HTML';
+  };
 
   const startTest = (testId: string) => {
     const test = tests.find(t => t.id === testId);
@@ -1409,47 +1486,118 @@ export const TestProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }));
   };
 
-  const submitTest = (): TestAttempt | null => {
-    if (!currentTest) return null;
+  const submitTest = async (): Promise<TestAttempt | null> => {
+    if (!currentTest || !user || !isAuthenticated) return null;
 
-    let correctAnswers = 0;
-    currentTest.questions.forEach(question => {
-      if (currentAnswers[question.id] === question.correctAnswer) {
-        correctAnswers++;
+    try {
+      setLoading(true);
+      
+      let correctAnswers = 0;
+      const answerDetails: Array<{
+        question_index: number;
+        question_text: string;
+        selected_answer: string;
+        correct_answer: string;
+        is_correct: boolean;
+        subject: string;
+      }> = [];
+
+      currentTest.questions.forEach((question, index) => {
+        const userAnswer = currentAnswers[question.id];
+        const isCorrect = userAnswer === question.correctAnswer;
+        
+        if (isCorrect) {
+          correctAnswers++;
+        }
+
+        answerDetails.push({
+          question_index: index,
+          question_text: question.question,
+          selected_answer: userAnswer !== undefined ? question.options[userAnswer] : 'No answer',
+          correct_answer: question.options[question.correctAnswer],
+          is_correct: isCorrect,
+          subject: currentTest.subject
+        });
+      });
+
+      const score = Math.round((correctAnswers / currentTest.questions.length) * 100);
+      
+      // Get subject ID
+      const { data: subjects } = await supabase
+        .from('subjects')
+        .select('id')
+        .eq('name', currentTest.subject)
+        .single();
+
+      if (!subjects) {
+        throw new Error('Subject not found');
       }
-    });
 
-    const score = Math.round((correctAnswers / currentTest.questions.length) * 100);
-    
-    const attempt: TestAttempt = {
-      testId: currentTest.id,
-      score,
-      totalQuestions: currentTest.questions.length,
-      answers: currentAnswers,
-      completedAt: new Date()
-    };
+      // Save quiz session
+      const { data: session, error: sessionError } = await supabase
+        .from('quiz_sessions')
+        .insert({
+          user_id: user.id,
+          subject_id: subjects.id,
+          score,
+          total_questions: currentTest.questions.length,
+          time_taken: null // You can implement timing if needed
+        })
+        .select()
+        .single();
 
-    // Update progress
-    const newProgress = { ...testProgress };
-    const currentProgress = newProgress[currentTest.id] || {
-      testId: currentTest.id,
-      attempts: 0,
-      bestScore: 0,
-      status: 'not-started' as const
-    };
+      if (sessionError) {
+        throw sessionError;
+      }
 
-    newProgress[currentTest.id] = {
-      ...currentProgress,
-      attempts: currentProgress.attempts + 1,
-      bestScore: Math.max(currentProgress.bestScore, score),
-      lastAttemptDate: new Date(),
-      status: 'completed'
-    };
+      // Save individual answers
+      const answersToSave = answerDetails.map(answer => ({
+        ...answer,
+        session_id: session.id
+      }));
 
-    setTestProgress(newProgress);
-    localStorage.setItem('student-test-progress', JSON.stringify(newProgress));
+      const { error: answersError } = await supabase
+        .from('quiz_answers')
+        .insert(answersToSave);
 
-    return attempt;
+      if (answersError) {
+        console.error('Error saving answers:', answersError);
+      }
+
+      // Update local progress
+      const newProgress = { ...testProgress };
+      const currentProgress = newProgress[currentTest.id] || {
+        testId: currentTest.id,
+        attempts: 0,
+        bestScore: 0,
+        status: 'not-started' as const
+      };
+
+      newProgress[currentTest.id] = {
+        ...currentProgress,
+        attempts: currentProgress.attempts + 1,
+        bestScore: Math.max(currentProgress.bestScore, score),
+        lastAttemptDate: new Date(),
+        status: 'completed'
+      };
+
+      setTestProgress(newProgress);
+
+      const attempt: TestAttempt = {
+        testId: currentTest.id,
+        score,
+        totalQuestions: currentTest.questions.length,
+        answers: currentAnswers,
+        completedAt: new Date()
+      };
+
+      return attempt;
+    } catch (error) {
+      console.error('Error submitting test:', error);
+      return null;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resetCurrentTest = () => {
