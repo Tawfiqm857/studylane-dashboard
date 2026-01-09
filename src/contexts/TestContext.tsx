@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { backend as supabase } from '@/integrations/backend/client';
 import { useAuth } from './AuthContext';
 
 // ... keep existing interfaces for questions and results ...
