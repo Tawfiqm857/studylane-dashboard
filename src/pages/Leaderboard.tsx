@@ -24,7 +24,7 @@ interface StudentData {
 
 const Leaderboard: React.FC = () => {
   const { user } = useAuth();
-  const { testProgress, tests } = useTest();
+  const { testProgress } = useTest();
 
   const calculateUserOverallScore = () => {
     const completedTests = Object.values(testProgress).filter(p => p.status === 'completed');
@@ -124,28 +124,32 @@ const Leaderboard: React.FC = () => {
 
   const getRankIcon = (rank: number) => {
     switch (rank) {
-      case 1: return <Crown className="h-6 w-6 text-yellow-500" />;
-      case 2: return <Medal className="h-6 w-6 text-gray-400" />;
-      case 3: return <Award className="h-6 w-6 text-amber-600" />;
+      case 1: return <Crown className="h-6 w-6 text-warning" />;
+      case 2: return <Medal className="h-6 w-6 text-muted-foreground" />;
+      case 3: return <Award className="h-6 w-6 text-warning" />;
       default: return <Star className="h-5 w-5 text-muted-foreground" />;
     }
   };
 
-  const getSubjectIcon = (subject: string) => {
-    switch (subject.toLowerCase()) {
-      case 'html': return <div className="w-4 h-4 bg-orange-500 rounded" />;
-      case 'css': return <div className="w-4 h-4 bg-blue-500 rounded" />;
-      case 'javascript': return <div className="w-4 h-4 bg-yellow-500 rounded" />;
-      default: return <div className="w-4 h-4 bg-gray-500 rounded" />;
-    }
+  const getSubjectBadge = (subject: string, score: number) => {
+    const colors: Record<string, string> = {
+      html: 'bg-warning/10 text-warning',
+      css: 'bg-primary/10 text-primary',
+      javascript: 'bg-warning/10 text-warning',
+    };
+    return (
+      <span className={`px-2 py-0.5 rounded text-xs font-medium ${colors[subject.toLowerCase()]}`}>
+        {score}%
+      </span>
+    );
   };
 
   return (
-    <div className="min-h-screen py-8">
+    <div className="min-h-screen py-8 bg-gradient-to-b from-muted/30 to-background">
       <div className="container max-w-6xl">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Student Leaderboard</h1>
+          <h1 className="text-3xl font-bold mb-2">Leaderboard</h1>
           <p className="text-muted-foreground">See how you rank against other students</p>
         </div>
 
@@ -153,32 +157,30 @@ const Leaderboard: React.FC = () => {
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
             {/* Top 3 Podium */}
-            <Card className="shadow-card border-0">
-              <CardHeader>
+            <Card className="shadow-lg border-0 overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-primary/5 to-accent/5">
                 <CardTitle className="flex items-center gap-2">
-                  <Trophy className="h-5 w-5 text-yellow-500" />
+                  <Trophy className="h-5 w-5 text-warning" />
                   Top Performers
                 </CardTitle>
                 <CardDescription>Our highest achieving students</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 <div className="grid md:grid-cols-3 gap-4">
                   {topStudents.map((student) => (
                     <div
                       key={student.id}
-                      className={`relative p-6 rounded-lg border text-center ${
+                      className={`relative p-6 rounded-xl border text-center transition-all hover:shadow-md ${
                         student.rank === 1 
-                          ? 'bg-gradient-primary border-primary/20' 
-                          : student.rank === 2
-                          ? 'bg-muted/50 border-muted'
+                          ? 'bg-gradient-to-b from-warning/10 to-warning/5 border-warning/20' 
                           : 'bg-muted/30 border-muted'
                       }`}
                     >
                       {student.isPremium && (
                         <div className="absolute -top-2 -right-2">
-                          <Badge className="bg-gradient-primary text-white">
+                          <Badge className="bg-primary text-primary-foreground shadow-md">
                             <Zap className="h-3 w-3 mr-1" />
-                            Premium
+                            Pro
                           </Badge>
                         </div>
                       )}
@@ -187,15 +189,17 @@ const Leaderboard: React.FC = () => {
                         {getRankIcon(student.rank)}
                       </div>
                       
-                      <Avatar className="h-16 w-16 mx-auto mb-3">
+                      <Avatar className="h-16 w-16 mx-auto mb-3 ring-2 ring-background shadow-md">
                         <AvatarImage src={student.avatar} alt={student.name} />
-                        <AvatarFallback>{student.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        <AvatarFallback className="bg-primary/10 text-primary">
+                          {student.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
                       </Avatar>
                       
-                      <h3 className="font-semibold mb-1">{student.name}</h3>
+                      <h3 className="font-semibold mb-1 truncate">{student.name}</h3>
                       <p className="text-2xl font-bold text-primary mb-2">{student.overallScore}%</p>
                       <p className="text-sm text-muted-foreground">
-                        {student.completedTests} tests completed
+                        {student.completedTests} tests
                       </p>
                     </div>
                   ))}
@@ -204,40 +208,45 @@ const Leaderboard: React.FC = () => {
             </Card>
 
             {/* Full Leaderboard */}
-            <Card className="shadow-card border-0">
+            <Card className="shadow-lg border-0">
               <CardHeader>
                 <CardTitle>Complete Rankings</CardTitle>
                 <CardDescription>All students ranked by overall performance</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {sortedStudents.map((student) => (
                     <div
                       key={student.id}
-                      className={`flex items-center justify-between p-4 rounded-lg border transition-colors ${
+                      className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
                         student.id === user?.id 
-                          ? 'bg-primary/5 border-primary/20' 
-                          : 'hover:bg-muted/50'
+                          ? 'bg-primary/5 border-primary/20 shadow-sm' 
+                          : 'hover:bg-muted/50 border-transparent'
                       }`}
                     >
                       <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2 min-w-[50px]">
+                        <div className="flex items-center gap-2 min-w-[60px]">
                           {getRankIcon(student.rank)}
                           <span className="font-bold text-lg">#{student.rank}</span>
                         </div>
                         
                         <Avatar className="h-10 w-10">
                           <AvatarImage src={student.avatar} alt={student.name} />
-                          <AvatarFallback>{student.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                          <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                            {student.name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
                         </Avatar>
                         
                         <div>
                           <div className="flex items-center gap-2">
                             <p className="font-medium">{student.name}</p>
+                            {student.id === user?.id && (
+                              <Badge variant="secondary" className="text-xs">You</Badge>
+                            )}
                             {student.isPremium && (
-                              <Badge variant="secondary" className="text-xs">
+                              <Badge variant="outline" className="text-xs">
                                 <Zap className="h-3 w-3 mr-1" />
-                                Premium
+                                Pro
                               </Badge>
                             )}
                           </div>
@@ -250,18 +259,9 @@ const Leaderboard: React.FC = () => {
                       <div className="text-right">
                         <p className="text-2xl font-bold text-primary">{student.overallScore}%</p>
                         <div className="flex items-center gap-2 mt-1">
-                          <div className="flex items-center gap-1 text-xs">
-                            {getSubjectIcon('html')}
-                            <span>{student.htmlScore}%</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-xs">
-                            {getSubjectIcon('css')}
-                            <span>{student.cssScore}%</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-xs">
-                            {getSubjectIcon('javascript')}
-                            <span>{student.jsScore}%</span>
-                          </div>
+                          {getSubjectBadge('html', student.htmlScore)}
+                          {getSubjectBadge('css', student.cssScore)}
+                          {getSubjectBadge('javascript', student.jsScore)}
                         </div>
                       </div>
                     </div>
@@ -274,39 +274,39 @@ const Leaderboard: React.FC = () => {
           {/* Right Column - Your Stats */}
           <div className="space-y-6">
             {currentUser && (
-              <Card className="shadow-card border-0">
+              <Card className="shadow-lg border-0">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Star className="h-5 w-5 text-primary" />
                     Your Performance
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-center">
+                <CardContent className="space-y-6">
+                  <div className="text-center p-4 rounded-xl bg-primary/5">
                     <div className="flex justify-center mb-2">
                       {getRankIcon(currentUser.rank)}
                     </div>
-                    <p className="text-3xl font-bold text-primary">#{currentUser.rank}</p>
-                    <p className="text-sm text-muted-foreground">Your current rank</p>
+                    <p className="text-4xl font-bold text-primary">#{currentUser.rank}</p>
+                    <p className="text-sm text-muted-foreground mt-1">Your current rank</p>
                   </div>
                   
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>Overall Score</span>
-                        <span className="font-medium">{currentUser.overallScore}%</span>
+                      <div className="flex justify-between text-sm mb-2">
+                        <span className="text-muted-foreground">Overall Score</span>
+                        <span className="font-bold">{currentUser.overallScore}%</span>
                       </div>
                       <Progress value={currentUser.overallScore} className="h-2" />
                     </div>
                     
-                    <div className="grid grid-cols-2 gap-4 text-center">
-                      <div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="text-center p-3 rounded-lg bg-muted/50">
                         <p className="text-2xl font-bold text-primary">{currentUser.completedTests}</p>
-                        <p className="text-xs text-muted-foreground">Tests Completed</p>
+                        <p className="text-xs text-muted-foreground">Tests Done</p>
                       </div>
-                      <div>
+                      <div className="text-center p-3 rounded-lg bg-muted/50">
                         <p className="text-2xl font-bold text-primary">{currentUser.totalAttempts}</p>
-                        <p className="text-xs text-muted-foreground">Total Attempts</p>
+                        <p className="text-xs text-muted-foreground">Attempts</p>
                       </div>
                     </div>
                   </div>
@@ -314,37 +314,32 @@ const Leaderboard: React.FC = () => {
               </Card>
             )}
 
-            {/* Premium Features */}
-            <Card className="shadow-card border-0 bg-gradient-subtle">
+            {/* Achievements */}
+            <Card className="shadow-lg border-0">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Zap className="h-5 w-5 text-primary" />
-                  Premium Features
+                  Unlock More
                 </CardTitle>
-                <CardDescription>Unlock special features with top performance</CardDescription>
+                <CardDescription>Achieve top ranking for special features</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="w-2 h-2 bg-primary rounded-full" />
-                    <span>Detailed Analytics</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="w-2 h-2 bg-primary rounded-full" />
-                    <span>Custom Study Plans</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="w-2 h-2 bg-primary rounded-full" />
-                    <span>Priority Support</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="w-2 h-2 bg-primary rounded-full" />
-                    <span>Advanced Test Features</span>
-                  </div>
+                  {[
+                    'Detailed Analytics',
+                    'Custom Study Plans',
+                    'Priority Support',
+                    'Advanced Features',
+                  ].map((feature, index) => (
+                    <div key={index} className="flex items-center gap-3 text-sm">
+                      <div className="w-2 h-2 bg-primary rounded-full" />
+                      <span className="text-muted-foreground">{feature}</span>
+                    </div>
+                  ))}
                 </div>
                 
-                <p className="text-xs text-muted-foreground mt-4">
-                  Achieve top 3 ranking to unlock premium features!
+                <p className="text-xs text-muted-foreground mt-4 p-3 rounded-lg bg-muted/50">
+                  Reach top 3 to unlock premium features!
                 </p>
               </CardContent>
             </Card>

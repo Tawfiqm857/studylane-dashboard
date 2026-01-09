@@ -108,11 +108,11 @@ const StudentPerformance: React.FC = () => {
   const getRankIcon = (rank: number) => {
     switch (rank) {
       case 1:
-        return <Crown className="h-5 w-5 text-yellow-500" />;
+        return <Crown className="h-5 w-5 text-warning" />;
       case 2:
-        return <Medal className="h-5 w-5 text-gray-400" />;
+        return <Medal className="h-5 w-5 text-muted-foreground" />;
       case 3:
-        return <Trophy className="h-5 w-5 text-amber-600" />;
+        return <Trophy className="h-5 w-5 text-warning" />;
       default:
         return <Star className="h-5 w-5 text-muted-foreground" />;
     }
@@ -121,11 +121,11 @@ const StudentPerformance: React.FC = () => {
   const getSubjectIcon = (subject: string) => {
     switch (subject) {
       case 'HTML':
-        return <BookOpen className="h-4 w-4 text-orange-500" />;
+        return <BookOpen className="h-4 w-4 text-warning" />;
       case 'CSS':
-        return <Target className="h-4 w-4 text-blue-500" />;
+        return <Target className="h-4 w-4 text-primary" />;
       case 'JavaScript':
-        return <TrendingUp className="h-4 w-4 text-yellow-500" />;
+        return <TrendingUp className="h-4 w-4 text-warning" />;
       default:
         return <BookOpen className="h-4 w-4" />;
     }
@@ -145,7 +145,7 @@ const StudentPerformance: React.FC = () => {
         </div>
 
         {/* Your Stats */}
-        <Card className="mb-8 shadow-card border-0">
+        <Card className="mb-8 shadow-lg border-0">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Trophy className="h-5 w-5 text-primary" />
@@ -157,19 +157,19 @@ const StudentPerformance: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="text-center">
+              <div className="text-center p-4 rounded-lg bg-primary/5">
                 <div className="text-3xl font-bold text-primary mb-1">{userStats?.rank}</div>
                 <div className="text-sm text-muted-foreground">Class Rank</div>
               </div>
-              <div className="text-center">
+              <div className="text-center p-4 rounded-lg bg-success/5">
                 <div className="text-3xl font-bold text-success mb-1">{userStats?.overallScore}%</div>
                 <div className="text-sm text-muted-foreground">Overall Score</div>
               </div>
-              <div className="text-center">
+              <div className="text-center p-4 rounded-lg bg-warning/5">
                 <div className="text-3xl font-bold text-warning mb-1">{userStats?.completedTests}</div>
                 <div className="text-sm text-muted-foreground">Tests Completed</div>
               </div>
-              <div className="text-center">
+              <div className="text-center p-4 rounded-lg bg-accent/5">
                 <div className="text-3xl font-bold text-accent mb-1">{userStats?.totalAttempts}</div>
                 <div className="text-sm text-muted-foreground">Total Attempts</div>
               </div>
@@ -179,7 +179,7 @@ const StudentPerformance: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Leaderboard */}
-          <Card className="shadow-card border-0">
+          <Card className="shadow-lg border-0">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Users className="h-5 w-5 text-primary" />
@@ -199,7 +199,9 @@ const StudentPerformance: React.FC = () => {
                       </div>
                       <Avatar className="h-8 w-8 flex-shrink-0">
                         <AvatarImage src={student.avatar} alt={student.name} />
-                        <AvatarFallback>{student.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                          {student.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
                       </Avatar>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium truncate">
@@ -220,7 +222,7 @@ const StudentPerformance: React.FC = () => {
           </Card>
 
           {/* Subject Performance */}
-          <Card className="shadow-card border-0">
+          <Card className="shadow-lg border-0">
             <CardHeader>
               <CardTitle>Subject Breakdown</CardTitle>
               <CardDescription>
@@ -267,7 +269,7 @@ const StudentPerformance: React.FC = () => {
         </div>
 
         {/* Detailed Student List */}
-        <Card className="mt-8 shadow-card border-0">
+        <Card className="mt-8 shadow-lg border-0">
           <CardHeader>
             <CardTitle>All Students</CardTitle>
             <CardDescription>
@@ -286,7 +288,9 @@ const StudentPerformance: React.FC = () => {
                       </div>
                       <Avatar className="h-10 w-10">
                         <AvatarImage src={student.avatar} alt={student.name} />
-                        <AvatarFallback>{student.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        <AvatarFallback className="bg-primary/10 text-primary">
+                          {student.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
                       </Avatar>
                       <div>
                         <p className="font-medium">
@@ -303,26 +307,26 @@ const StudentPerformance: React.FC = () => {
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="text-center p-3 bg-orange-50 rounded">
+                    <div className="text-center p-3 bg-warning/5 rounded-lg">
                       <div className="flex items-center justify-center space-x-1 mb-1">
                         {getSubjectIcon('HTML')}
                         <span className="text-sm font-medium">HTML</span>
                       </div>
-                      <p className="text-lg font-bold text-orange-600">{student.htmlScore}%</p>
+                      <p className="text-lg font-bold text-warning">{student.htmlScore}%</p>
                     </div>
-                    <div className="text-center p-3 bg-blue-50 rounded">
+                    <div className="text-center p-3 bg-primary/5 rounded-lg">
                       <div className="flex items-center justify-center space-x-1 mb-1">
                         {getSubjectIcon('CSS')}
                         <span className="text-sm font-medium">CSS</span>
                       </div>
-                      <p className="text-lg font-bold text-blue-600">{student.cssScore}%</p>
+                      <p className="text-lg font-bold text-primary">{student.cssScore}%</p>
                     </div>
-                    <div className="text-center p-3 bg-yellow-50 rounded">
+                    <div className="text-center p-3 bg-warning/5 rounded-lg">
                       <div className="flex items-center justify-center space-x-1 mb-1">
                         {getSubjectIcon('JavaScript')}
                         <span className="text-sm font-medium">JS</span>
                       </div>
-                      <p className="text-lg font-bold text-yellow-600">{student.jsScore}%</p>
+                      <p className="text-lg font-bold text-warning">{student.jsScore}%</p>
                     </div>
                   </div>
                 </div>

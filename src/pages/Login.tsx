@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, EyeOff, BookOpen } from 'lucide-react';
+import { Eye, EyeOff, BookOpen, Loader2, ArrowRight } from 'lucide-react';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -28,7 +28,7 @@ const Login: React.FC = () => {
     if (!email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = 'Please enter a valid email address';
     }
 
     if (!password) {
@@ -54,12 +54,12 @@ const Login: React.FC = () => {
       if (success) {
         toast({
           title: 'Welcome back!',
-          description: 'You have successfully logged in.',
+          description: 'You have successfully signed in.',
         });
         navigate(from, { replace: true });
       } else {
         toast({
-          title: 'Login failed',
+          title: 'Sign in failed',
           description: 'Invalid email or password. Please try again.',
           variant: 'destructive',
         });
@@ -78,21 +78,23 @@ const Login: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 bg-gradient-to-br from-primary/5 via-background to-accent/5">
       <div className="w-full max-w-md">
+        {/* Branding */}
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="p-3 rounded-full bg-primary/10">
+          <Link to="/" className="inline-flex items-center justify-center mb-6 group">
+            <div className="p-3 rounded-2xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
               <BookOpen className="h-8 w-8 text-primary" />
             </div>
-          </div>
-          <h1 className="text-2xl font-bold">Welcome Back</h1>
-          <p className="text-muted-foreground">Sign in to your StudyLane account</p>
+          </Link>
+          <h1 className="text-3xl font-bold tracking-tight">Welcome back</h1>
+          <p className="text-muted-foreground mt-2">Sign in to continue your learning journey</p>
         </div>
 
-        <Card className="shadow-soft border-0">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center">Sign In</CardTitle>
-            <CardDescription className="text-center">
-              Enter your credentials to access your dashboard
+        {/* Login Card */}
+        <Card className="shadow-lg border-0 bg-card/80 backdrop-blur-sm">
+          <CardHeader className="space-y-1 pb-4">
+            <CardTitle className="text-xl">Sign in to your account</CardTitle>
+            <CardDescription>
+              Enter your credentials below
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -102,11 +104,12 @@ const Login: React.FC = () => {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className={errors.email ? 'border-destructive' : ''}
-                  required
+                  className={`h-11 ${errors.email ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  autoComplete="email"
+                  disabled={isLoading}
                 />
                 {errors.email && (
                   <p className="text-sm text-destructive">{errors.email}</p>
@@ -119,11 +122,12 @@ const Login: React.FC = () => {
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter your password"
+                    placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className={errors.password ? 'border-destructive pr-10' : 'pr-10'}
-                    required
+                    className={`h-11 pr-10 ${errors.password ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                    autoComplete="current-password"
+                    disabled={isLoading}
                   />
                   <Button
                     type="button"
@@ -131,6 +135,7 @@ const Login: React.FC = () => {
                     size="sm"
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
+                    disabled={isLoading}
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4 text-muted-foreground" />
@@ -144,36 +149,36 @@ const Login: React.FC = () => {
                 )}
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Signing in...' : 'Sign In'}
+              <Button type="submit" className="w-full h-11 text-base" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  <>
+                    Sign In
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
               </Button>
             </form>
 
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-muted"></div>
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">Demo Credentials</span>
-                </div>
-              </div>
-              <div className="mt-4 p-3 bg-muted/50 rounded-lg text-sm">
-                <p className="font-medium mb-1">Try these demo accounts:</p>
-                <p>Email: john@example.com</p>
-                <p>Email: jane@example.com</p>
-                <p>Password: password123</p>
-              </div>
-            </div>
-
-            <div className="mt-6 text-center text-sm">
-              <span className="text-muted-foreground">Don't have an account? </span>
-              <Link to="/signup" className="text-primary hover:underline font-medium">
-                Sign up
-              </Link>
+            <div className="mt-6 text-center">
+              <p className="text-sm text-muted-foreground">
+                Don't have an account?{' '}
+                <Link to="/signup" className="text-primary hover:underline font-medium">
+                  Create one now
+                </Link>
+              </p>
             </div>
           </CardContent>
         </Card>
+
+        {/* Footer */}
+        <p className="mt-8 text-center text-xs text-muted-foreground">
+          By signing in, you agree to our Terms of Service and Privacy Policy.
+        </p>
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, EyeOff, BookOpen } from 'lucide-react';
+import { Eye, EyeOff, BookOpen, Loader2, ArrowRight, Check } from 'lucide-react';
 
 const Signup: React.FC = () => {
   const [name, setName] = useState('');
@@ -22,11 +22,16 @@ const Signup: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  const passwordRequirements = [
+    { label: 'At least 6 characters', met: password.length >= 6 },
+    { label: 'Passwords match', met: password === confirmPassword && confirmPassword.length > 0 },
+  ];
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
     if (!name.trim()) {
-      newErrors.name = 'Full name is required';
+      newErrors.name = 'Name is required';
     } else if (name.trim().length < 2) {
       newErrors.name = 'Name must be at least 2 characters';
     }
@@ -34,7 +39,7 @@ const Signup: React.FC = () => {
     if (!email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = 'Please enter a valid email address';
     }
 
     if (!password) {
@@ -71,8 +76,8 @@ const Signup: React.FC = () => {
         navigate('/dashboard');
       } else {
         toast({
-          title: 'Signup failed',
-          description: 'An account with this email already exists.',
+          title: 'Sign up failed',
+          description: 'An account with this email may already exist.',
           variant: 'destructive',
         });
       }
@@ -90,21 +95,23 @@ const Signup: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 bg-gradient-to-br from-primary/5 via-background to-accent/5">
       <div className="w-full max-w-md">
+        {/* Branding */}
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="p-3 rounded-full bg-primary/10">
+          <Link to="/" className="inline-flex items-center justify-center mb-6 group">
+            <div className="p-3 rounded-2xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
               <BookOpen className="h-8 w-8 text-primary" />
             </div>
-          </div>
-          <h1 className="text-2xl font-bold">Join StudyLane</h1>
-          <p className="text-muted-foreground">Create your account to start learning</p>
+          </Link>
+          <h1 className="text-3xl font-bold tracking-tight">Create your account</h1>
+          <p className="text-muted-foreground mt-2">Start your web development journey today</p>
         </div>
 
-        <Card className="shadow-soft border-0">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center">Create Account</CardTitle>
-            <CardDescription className="text-center">
-              Enter your information to get started
+        {/* Signup Card */}
+        <Card className="shadow-lg border-0 bg-card/80 backdrop-blur-sm">
+          <CardHeader className="space-y-1 pb-4">
+            <CardTitle className="text-xl">Get started for free</CardTitle>
+            <CardDescription>
+              Fill in your details to create an account
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -114,11 +121,12 @@ const Signup: React.FC = () => {
                 <Input
                   id="name"
                   type="text"
-                  placeholder="Enter your full name"
+                  placeholder="John Doe"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className={errors.name ? 'border-destructive' : ''}
-                  required
+                  className={`h-11 ${errors.name ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  autoComplete="name"
+                  disabled={isLoading}
                 />
                 {errors.name && (
                   <p className="text-sm text-destructive">{errors.name}</p>
@@ -130,11 +138,12 @@ const Signup: React.FC = () => {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className={errors.email ? 'border-destructive' : ''}
-                  required
+                  className={`h-11 ${errors.email ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  autoComplete="email"
+                  disabled={isLoading}
                 />
                 {errors.email && (
                   <p className="text-sm text-destructive">{errors.email}</p>
@@ -147,11 +156,12 @@ const Signup: React.FC = () => {
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Create a password"
+                    placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className={errors.password ? 'border-destructive pr-10' : 'pr-10'}
-                    required
+                    className={`h-11 pr-10 ${errors.password ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                    autoComplete="new-password"
+                    disabled={isLoading}
                   />
                   <Button
                     type="button"
@@ -159,6 +169,7 @@ const Signup: React.FC = () => {
                     size="sm"
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
+                    disabled={isLoading}
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4 text-muted-foreground" />
@@ -178,11 +189,12 @@ const Signup: React.FC = () => {
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? 'text' : 'password'}
-                    placeholder="Confirm your password"
+                    placeholder="••••••••"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className={errors.confirmPassword ? 'border-destructive pr-10' : 'pr-10'}
-                    required
+                    className={`h-11 pr-10 ${errors.confirmPassword ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                    autoComplete="new-password"
+                    disabled={isLoading}
                   />
                   <Button
                     type="button"
@@ -190,6 +202,7 @@ const Signup: React.FC = () => {
                     size="sm"
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    disabled={isLoading}
                   >
                     {showConfirmPassword ? (
                       <EyeOff className="h-4 w-4 text-muted-foreground" />
@@ -203,19 +216,53 @@ const Signup: React.FC = () => {
                 )}
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Creating account...' : 'Create Account'}
+              {/* Password requirements */}
+              {password.length > 0 && (
+                <div className="space-y-2 p-3 rounded-lg bg-muted/50">
+                  <p className="text-xs font-medium text-muted-foreground">Password requirements:</p>
+                  <div className="space-y-1">
+                    {passwordRequirements.map((req, index) => (
+                      <div key={index} className="flex items-center gap-2 text-xs">
+                        <Check className={`h-3 w-3 ${req.met ? 'text-success' : 'text-muted-foreground'}`} />
+                        <span className={req.met ? 'text-success' : 'text-muted-foreground'}>
+                          {req.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <Button type="submit" className="w-full h-11 text-base" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating account...
+                  </>
+                ) : (
+                  <>
+                    Create Account
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
               </Button>
             </form>
 
-            <div className="mt-6 text-center text-sm">
-              <span className="text-muted-foreground">Already have an account? </span>
-              <Link to="/login" className="text-primary hover:underline font-medium">
-                Sign in
-              </Link>
+            <div className="mt-6 text-center">
+              <p className="text-sm text-muted-foreground">
+                Already have an account?{' '}
+                <Link to="/login" className="text-primary hover:underline font-medium">
+                  Sign in
+                </Link>
+              </p>
             </div>
           </CardContent>
         </Card>
+
+        {/* Footer */}
+        <p className="mt-8 text-center text-xs text-muted-foreground">
+          By creating an account, you agree to our Terms of Service and Privacy Policy.
+        </p>
       </div>
     </div>
   );
